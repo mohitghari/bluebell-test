@@ -77,6 +77,12 @@ export class CreateUserComponent implements OnInit {
     this.submitted = true;
     const userData = this.userForm.value
     if (this.userForm.invalid) {
+      UIkit.switcher(this.switcher.nativeElement).show(0);
+      UIkit.notification({
+        message: 'Fill the form properly!',
+        status: 'warning',
+        pos: 'top-center'
+      })
       return;
     }
     const user: User = {
