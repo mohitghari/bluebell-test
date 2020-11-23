@@ -1,0 +1,213 @@
+<div class="uk-margin-small-right uk-text-right">
+    <button class="uk-button uk-button-default" (click)="openUserModal()">Add User</button>
+</div>
+<table class="uk-table uk-table-small uk-table-divider" *ngIf="allUsersData.length > 0">
+    <thead>
+        <tr>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of allUsersData; let i = index">
+            <td><img src="{{user.photo}}" class="user-img"></td>
+            <td>{{user.FirstName}} {{user.lastName}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.mobile}}</td>
+            <td><a uk-icon="icon: pencil; ratio: 1.5" (click)="updateUser(user)"></a></td>
+            <td><a uk-icon="icon: trash; ratio: 1.5" (click)="deleteUser(user)"></a></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+
+
+
+<div id="modal-manual-booking" class="uk-flex-top" uk-modal #userFormModal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <form [formGroup]="userForm" (ngSubmit)="adduser()">
+            <ul #switcher class="uk-subnav uk-subnav-pill"
+                uk-switcher="animation: uk-animation-slide-left-medium, uk-animation-slide-right-medium">
+                <li><a href="#">General</a></li>
+                <li><a href="#">Service</a></li>
+
+            </ul>
+
+            <ul class="uk-switcher uk-margin">
+
+                <li>
+                    <div class="uk-flex">
+                        <div>
+                            <div class="uk-margin">
+                                <div class="uk-form-label uk-text-bold">Photo:</div>
+                                <div class="uk-form-controls">
+                                    <label> <input formControlName="photo" (change)="showPreview($event)" type="file"
+                                            accept="image/*" /></label>
+
+                                    <div class="imagePreview" *ngIf="imageURL">
+                                        <img [src]="imageURL">
+                                    </div>
+
+                                    <div *ngIf="userForm.controls.photo.invalid && submitted" class="uk-text-danger">
+                                        <small *ngIf="userForm.controls.photo.errors.requiredFileType">File must be
+                                            Image</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label class="uk-form-label uk-text-bold"> * FirstName :</label>
+                                <div class="uk-form-controls">
+                                    <input formControlName="firstname" class="uk-input" id="form-stacked-text"
+                                        type="text" placeholder="Enter firstname">
+                                </div>
+                                <div class="uk-text-danger">
+                                    <small class="uk-margin-remove"
+                                        [ngClass]="(userForm.controls.firstname.errors && submitted) ? 'uk-visible' : 'uk-invisible'">
+                                        *Required</small>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="uk-form-label uk-text-bold"> * Lastname :</label>
+                                <div class="uk-form-controls">
+                                    <input formControlName="lastname" class="uk-input" id="form-stacked-text"
+                                        type="text" placeholder="lastname">
+                                </div>
+                                <div class="uk-text-danger">
+                                    <small
+                                        [ngClass]="(userForm.controls.lastname.errors && submitted) ? 'uk-visible' : 'uk-invisible'">
+                                        *Required</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="uk-flex">
+                        <div>
+                            <label class="uk-form-label uk-text-bold"> * Email :</label>
+                            <div class="uk-form-controls">
+                                <input formControlName="email" class="uk-input" id="form-stacked-text" type="text"
+                                    placeholder="email">
+                            </div>
+                            <div class="uk-text-danger">
+                                <small
+                                    [ngClass]="(userForm.controls.email.errors && submitted) ? 'uk-visible' : 'uk-invisible'">
+                                    <span *ngIf="userForm.controls.email.errors?.required && submitted">*Required</span>
+                                    <span *ngIf="userForm.controls.email.errors?.email && submitted">*Enter valid
+                                        email</span>
+                                </small>
+                            </div>
+                        </div>
+                        <div style="margin-left: 56px">
+                            <label class="uk-form-label uk-text-bold"> mobile :</label>
+                            <div class="uk-form-controls">
+                                <input formControlName="mobile" class="uk-input" id="form-stacked-text" type="number"
+                                    placeholder="mobile">
+                            </div>
+                            <div class="uk-text-danger">
+                                <small class="uk-margin-remove"
+                                    [ngClass]="(userForm.controls.mobile.errors && submitted) ? 'uk-visible' : 'uk-invisible'">
+                                    *Required</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="uk-form-label uk-text-bold"> Gender :</label>
+                        <div class="uk-form-controls">
+                            <input type="radio" [value]="true" formControlName="gender" class="uk-radio"> Active
+                            <input type="radio" [value]="false" formControlName="gender" class="uk-radio"> InActive
+                        </div>
+                        <div class="uk-text-danger">
+                            <small class="uk-margin-remove"
+                                [ngClass]="(userForm.controls.gender.errors && submitted) ? 'uk-visible' : 'uk-invisible'">
+                                *Required</small>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="uk-form-label uk-text-bold"> permission :</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-checkbox" type="checkbox">Admin
+                            <input class="uk-checkbox" type="checkbox">User
+                        </div>
+                    </div>
+
+                    <!-- <div>
+                <label class="uk-form-label uk-text-bold"> Permission :</label>
+                <div class="uk-form-controls">
+                    <div *ngFor="let city of cities; let i = index" formArrayName="permission">
+                        <input type="checkbox" [formControlName]="i">
+                        <span>{{city}}</span>
+                      </div>
+                </div>
+            </div> -->
+
+                </li>
+                <li>
+                    <div class="uk-text-right">
+                        <input *ngIf="!updateServiceButton" type="button" value="Add new service"
+                            class="uk-button uk-button-default uk-button-small" (click)="addNewService()">
+                        <input *ngIf="updateServiceButton" type="button" value="Update service"
+                            class="uk-button uk-button-default uk-button-small" (click)="addNewService()">
+                    </div>
+                    <div>
+                        <ul class="uk-list" *ngIf="servicedata.length > 0">
+                            <li *ngFor="let data of servicedata;let i = index" style="background: aliceblue;
+                            padding: 10px;">
+                                <span>{{data.problem}}</span>
+                                <span class="uk-margin-large-left">
+                                    <span (click)="deleteService(i)" uk-icon="trash" style="cursor: pointer;"></span>
+                                    <span class="uk-margin-small-left" (click)="updateService(data,i)" uk-icon="pencil"
+                                        style="cursor: pointer;"></span>
+                                </span>
+
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <label class="uk-form-label uk-text-bold"> Session :</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-checkbox" type="checkbox">FirstVisit
+                            <input class="uk-checkbox" type="checkbox">Revisit
+                        </div>
+                    </div>
+                    <div>
+                        <label class="uk-form-label uk-text-bold"> Problem :</label>
+                        <div class="uk-form-controls">
+                            <input formControlName="problem" class="uk-input" id="form-stacked-text" type="text"
+                                placeholder="Enter problem">
+                            <div class="uk-text-danger">
+                                <small class="uk-margin-remove"
+                                    [ngClass]="(userForm.controls.problem.errors && submitService) ? 'uk-visible' : 'uk-invisible'">
+                                    *Required</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="uk-form-label uk-text-bold"> Method :</label>
+                        <div class="uk-form-controls">
+                            <input formControlName="method" class="uk-input" id="form-stacked-text" type="text"
+                                placeholder="Enter your method">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin uk-flex uk-flex-center" style="border-top: 2px solid;padding-top: 10px;">
+                        <input type="submit" class="uk-button uk-button-primary">
+                    </div>
+                </li>
+            </ul>
+        </form>
+
+
+
+
+
+    </div>
+</div>
